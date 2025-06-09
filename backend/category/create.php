@@ -1,6 +1,15 @@
 <?php 
-include 'config.php'; 
-include '../dbconnect.php';
+include '../config.php'; 
+include '../../dbconnect.php';
+
+if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = htmlspecialchars($_POST['categoryName']);
+    $stmt = $pdo->prepare("INSERT INTO categories (name) VALUES (:name)");
+    $stmt->execute([
+        'name' => $name
+    ]);
+    header('Location: list.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,13 +25,13 @@ include '../dbconnect.php';
     <title>SB Admin 2 - Blank</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
 
@@ -32,7 +41,7 @@ include '../dbconnect.php';
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include 'sidebar.php'; ?>
+        <?php include '../sidebar.php'; ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -42,15 +51,23 @@ include '../dbconnect.php';
             <div id="content">
 
                 <!-- Topbar -->
-                <?php include 'navbar.php'; ?>
+                <?php include '../navbar.php'; ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Dashboard Page</h1>
-
+                    <h1 class="h3 mb-4 text-gray-800">Category Create Page</h1>
+                    <a href="list.php" class="btn btn-primary">Back</a>
+                    
+                    <form action="#" method="post">
+                        <div class="form-group">  
+                            <label for="name">Category Name</label>
+                            <input type="text" placeholder="Enter Category Name" class="form-control w-50" name="categoryName" id="name" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -58,7 +75,7 @@ include '../dbconnect.php';
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php include 'footer.php'; ?>
+            <?php include '../footer.php'; ?>
             <!-- End of Footer -->
 
         </div>
@@ -93,14 +110,14 @@ include '../dbconnect.php';
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
 
