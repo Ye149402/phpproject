@@ -1,28 +1,6 @@
 <?php 
 include '../config.php'; 
 include '../../dbconnect.php';
-
-if(isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $stmt = $pdo->prepare("SELECT * FROM students WHERE id = :id");
-    $stmt->execute([
-        'id' => $id
-    ]);
-    $student = $stmt->fetch(PDO::FETCH_ASSOC);
-    // print_r($student);
-
-    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $name = htmlspecialchars($_POST['categoryName']);
-        $stmt = $pdo->prepare("UPDATE categories SET name = :name WHERE id = :id");
-        $stmt->execute([
-            'name' => $name,
-            'id' => $_GET['id']
-        ]);
-        header('Location: list.php');
-    }
-}
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,38 +49,43 @@ if(isset($_GET['id'])) {
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Student Edit Page</h1>
-                    <a href="list.php" class="btn btn-primary">Back</a>
+                    <h1 class="h3 mb-4 text-gray-800">Post List Page</h1>
                     
-                    <form action="#" method="post">
-                        <div class="form-group">  
-                            <label for="name">Name</label>
-                            <input type="text" placeholder="Enter Category Name" class="form-control w-50" name="studentName" id="name" required value="<?= $student['name'] ?>">
-                        </div>
-                        <div class="form-group">  
-                            <label for="name">Age</label>
-                            <input type="number" placeholder="Enter Student Age" class="form-control w-50" name="studentAge" id="name" required value="<?= $student['age'] ?>">
-                        </div>
-                        <div class="form-group">  
-                            <div class="form-check">
-                              <input class="form-check-input" type="radio" name="studentGender" id="male" <?php if($student['gender'] == 'male') { echo 'checked'; } ?>>
-                              <label class="form-check-label" for="male">
-                                  Male
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input class="form-check-input" type="radio" name="studentGender" id="female" <?php if($student['gender'] == 'female') { echo 'checked'; } ?>>
-                              <label class="form-check-label" for="female">
-                                  Female
-                              </label>
-                            </div>
-                        </div>
-                        <div class="form-group">  
-                            <label for="address">Address</label>
-                            <textarea placeholder="Enter Student Address" class="form-control w-50" name="studentAddress" id="address" required><?= $student['address'] ?></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </form>
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $stmt = $pdo->query("SELECT * FROM posts ORDER BY id DESC");
+                                $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                // print_r($posts);
+                                $i=1;
+                                foreach ($posts as $post):
+                            ?>
+                            <tr>
+                                <td><?= $i++; ?></td>  
+                                <td><?= $post['title'] ?></td>
+                                <td><?= $post['author_id'] ?></td>
+                                <td><?= $post['category_id'] ?></td>
+                                <td>
+                                  <?= $post['status'] ?>
+                                  <p><?= $post['created_at'] ?></p>
+                                </td>
+                                <td>
+                                    <a href="detail.php?id=<?= $post['id'] ?>" class="btn btn-primary">Detail</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
                 <!-- /.container-fluid -->
 

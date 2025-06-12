@@ -2,27 +2,14 @@
 include '../config.php'; 
 include '../../dbconnect.php';
 
-if(isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $stmt = $pdo->prepare("SELECT * FROM students WHERE id = :id");
+if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = htmlspecialchars($_POST['categoryName']);
+    $stmt = $pdo->prepare("INSERT INTO categories (name) VALUES (:name)");
     $stmt->execute([
-        'id' => $id
+        'name' => $name
     ]);
-    $student = $stmt->fetch(PDO::FETCH_ASSOC);
-    // print_r($student);
-
-    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $name = htmlspecialchars($_POST['categoryName']);
-        $stmt = $pdo->prepare("UPDATE categories SET name = :name WHERE id = :id");
-        $stmt->execute([
-            'name' => $name,
-            'id' => $_GET['id']
-        ]);
-        header('Location: list.php');
-    }
+    header('Location: list.php');
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,37 +58,15 @@ if(isset($_GET['id'])) {
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Student Edit Page</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Category Create Page</h1>
                     <a href="list.php" class="btn btn-primary">Back</a>
                     
                     <form action="#" method="post">
                         <div class="form-group">  
-                            <label for="name">Name</label>
-                            <input type="text" placeholder="Enter Category Name" class="form-control w-50" name="studentName" id="name" required value="<?= $student['name'] ?>">
+                            <label for="name">Category Name</label>
+                            <input type="text" placeholder="Enter Category Name" class="form-control w-50" name="categoryName" id="name" required>
                         </div>
-                        <div class="form-group">  
-                            <label for="name">Age</label>
-                            <input type="number" placeholder="Enter Student Age" class="form-control w-50" name="studentAge" id="name" required value="<?= $student['age'] ?>">
-                        </div>
-                        <div class="form-group">  
-                            <div class="form-check">
-                              <input class="form-check-input" type="radio" name="studentGender" id="male" <?php if($student['gender'] == 'male') { echo 'checked'; } ?>>
-                              <label class="form-check-label" for="male">
-                                  Male
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input class="form-check-input" type="radio" name="studentGender" id="female" <?php if($student['gender'] == 'female') { echo 'checked'; } ?>>
-                              <label class="form-check-label" for="female">
-                                  Female
-                              </label>
-                            </div>
-                        </div>
-                        <div class="form-group">  
-                            <label for="address">Address</label>
-                            <textarea placeholder="Enter Student Address" class="form-control w-50" name="studentAddress" id="address" required><?= $student['address'] ?></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>
                 <!-- /.container-fluid -->
