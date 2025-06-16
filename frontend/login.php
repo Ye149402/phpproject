@@ -1,38 +1,27 @@
 <?php 
   include '../dbconnect.php';
   session_start();
-  $errors = [];
+  
   if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = htmlspecialchars($_POST['userName']);
     $email = htmlspecialchars($_POST['userEmail']);
     $password = htmlspecialchars($_POST['userPassword']);
-    $confirmPassword = htmlspecialchars($_POST['userConfirmPassword']);
-    // echo $name .','. $email .','. $password .','. $confirmPassword;
+    // echo $email .','. $password;
+
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
     $stmt->execute([
       'email' => $email
     ]);
-    $user = $stmt->fetch(); // boolean - false
+    $user = $stmt->fetch();
     // var_dump($user);
-    if($password != $confirmPassword) { // password not match
-      $errors['password'] = 'Password not match';
-      // header('Location: register.php');
-      // var_dump($errors);
-      // exit();
-    } else if ($user) { // email exist
-      $errors['email'] = 'Email already exist';
-      // header('Location: register.php');
-      // var_dump($errors);
-      // exit();
-    } else { // email not exist
-      $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-      // echo $hashedPassword;
-      $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-      $stmt->execute([
-        'name' => $name,
-        'email' => $email,
-        'password' => $hashedPassword
-      ]);
+    if ($user) {
+      if (password_verify($password, $user['password'])) {
+        $_SESSION['user'] = $user;
+        $_SESSION['login'] = true;
+        header('Location: index.php');
+      } else {
+        header('Location: login.php');
+      }
+    } else {
       header('Location: login.php');
     }
   }
@@ -58,32 +47,18 @@
             <div class="row justify-content-md-center">
                 <!-- Blog entries-->
                 <div class="col-lg-6">
-                  <h3>Register</h3>
+                  <h3>Login</h3>
                   <form action="#" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
-                    <div class="form-floating mb-3">
-                      <input type="text" class="form-control" id="floatingInputName" placeholder="shewu" name="userName" required>
-                      <label for="floatingInputName">Name</label>
-                    </div>
                     <div class="form-floating mb-3">
                       <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="userEmail" required>
                       <label for="floatingInput">Email address</label>
-                      <div class="text-danger">
-                        <?php if (isset($errors['email'])) { echo $errors['email']; } ?>
-                      </div>
                     </div>
                     <div class="form-floating mb-3">
                       <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="userPassword" required>
                       <label for="floatingPassword">Password</label>
                     </div>
-                    <div class="form-floating mb-3">
-                      <input type="password" class="form-control" id="floatingConfirmPassword" placeholder="ConfirmPassword" name="userConfirmPassword" required>
-                      <label for="floatingConfirmPassword">Confirm Password</label>
-                      <div class="text-danger">
-                        <?php if (isset($errors['password'])) { echo $errors['password']; } ?>
-                      </div>
-                    </div>
                     <div class="d-grid gap-2">
-                      <button class="btn btn-primary" type="submit">Register</button>
+                      <button class="btn btn-primary" type="submit">Login</button>
                     </div>
                   </form>
                 </div>
