@@ -49,35 +49,31 @@ include '../../dbconnect.php';
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Student List Page</h1>
-                    <a href="create.php" class="btn btn-primary">Add Student</a>
+                    <h1 class="h3 mb-4 text-gray-800">Category List Page</h1>
+                    <a href="create.php" class="btn btn-primary">Add Category</a>
                     
                     <table class="table table-bordered table-hover">
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
-                                <th>Name</th>
-                                <th>Gender</th>
-                                <th>Address</th>
+                                <th>Category Name</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php 
-                                $stmt = $pdo->query("SELECT * FROM students ORDER BY id DESC");
-                                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                // print_r($students);
+                                $stmt = $pdo->query("SELECT * FROM categories ORDER BY id DESC");
+                                $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                // print_r($categories);
                                 $i=1;
-                                foreach ($students as $student):
+                                foreach ($categories as $category):
                             ?>
                             <tr>
                                 <td><?= $i++; ?></td>  
-                                <td><?= $student['name'] ?></td>
-                                <td><?= $student['gender'] ?></td>
-                                <td><?= $student['address'] ?></td>
+                                <td><?= $category['name'] ?></td>
                                 <td>
-                                    <a href="edit.php?id=<?= $student['id'] ?>" class="btn btn-primary">Edit</a>
-                                    <a href="delete.php?id=<?= $student['id'] ?>" onclick="return confirm('Are you sure to delete?')" class="btn btn-danger">Delete</a>
+                                    <a href="edit.php?id=<?= $category['id'] ?>" class="btn btn-primary">Edit</a>
+                                    <a href="delete.php?id=<?= $category['id'] ?>" onclick="return confirm('Are you sure to delete?')" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
